@@ -8,12 +8,14 @@ export const setupServer = () => {
   const app = express();
 
   app.use(cors());
-  const logger = pino({
-    transport: {
-      target: 'pino-pretty',
-    },
-  });
-  //   app.use(logger);
+
+  app.use(
+    pino({
+      transport: {
+        target: 'pino-pretty',
+      },
+    }),
+  );
 
   app.get('/contacts', async (req, res) => {
     const data = await contactServices.getContacts();
