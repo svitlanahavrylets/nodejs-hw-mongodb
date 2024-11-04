@@ -14,13 +14,13 @@ contactsRouter.get(
 contactsRouter.post('/', ctrlWrapper(contactController.postContactsController));
 
 contactsRouter.patch(
-  '/',
-  ctrlWrapper(contactController.patchContactsController),
+  '/:contactId',
+  ctrlWrapper(contactController.upsertContactsController),
 );
 
 contactsRouter.delete(
-  '/',
-  ctrlWrapper(contactController.deleteContactsController),
+  '/:contactId',
+  ctrlWrapper(contactController.deleteContactsByIdController),
 );
 
 export default contactsRouter;
