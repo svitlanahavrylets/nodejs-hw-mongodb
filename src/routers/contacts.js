@@ -15,7 +15,7 @@ contactsRouter.post('/', ctrlWrapper(contactController.postContactsController));
 
 contactsRouter.patch(
   '/:contactId',
-  ctrlWrapper(contactController.upsertContactsController),
+  ctrlWrapper(contactController.patchContactsController),
 );
 
 contactsRouter.delete(

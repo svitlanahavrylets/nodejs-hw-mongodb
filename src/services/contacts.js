@@ -7,20 +7,10 @@ export const getContactById = (contactId) =>
 
 export const postContacts = (payload) => ContactCollection.create(payload);
 
-export const updateContacts = async ({ _id, payload, options = {} }) => {
-  const rawResult = await ContactCollection.findOneAndUpdate({ _id }, payload, {
-    ...options,
+export const patchContacts = (contactId, payload) =>
+  ContactCollection.findOneAndUpdate({ _id: contactId }, payload, {
     new: true,
-    includeResultMetadata: true,
   });
-
-  if (!rawResult || !rawResult.value) return null;
-
-  return {
-    data: rawResult.value,
-    isNew: Boolean(rawResult.lastErrorObject.upserted),
-  };
-};
 
 export const deleteContactById = (contactId) =>
   ContactCollection.findByIdAndDelete({ _id: contactId });
