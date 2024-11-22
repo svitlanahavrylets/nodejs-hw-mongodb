@@ -1,8 +1,8 @@
-// import { typeList } from '../constants/contacts.js';
+import { typeList } from '../constants/contacts.js';
 
 const parseContactType = (contactType) => {
   if (typeof contactType !== `string`) return;
-  const isContactType = ['work', 'home', 'personal'].includes(contactType);
+  const isContactType = typeList.includes(contactType);
   if (isContactType) return contactType;
 };
 const parseIsFavourite = (isFavourite) => {
