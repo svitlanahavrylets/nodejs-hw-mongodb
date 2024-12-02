@@ -111,9 +111,9 @@ export const requestResetToken = async (email) => {
     'reset-password-email.html',
   );
 
-  const templateSource = await fs
-    .readFile(resetPasswordTemplatePath)
-    .toString();
+  const templateSource = (
+    await fs.readFile(resetPasswordTemplatePath)
+  ).toString();
 
   const template = handlebars.compile(templateSource);
 
