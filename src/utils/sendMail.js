@@ -6,7 +6,7 @@ import createHttpError from 'http-errors';
 const transporter = nodemailer.createTransport({
   host: env(SMTP.SMTP_HOST),
   port: Number(env(SMTP.SMTP_PORT)),
-  secure: true,
+  secure: false,
   auth: {
     user: env(SMTP.SMTP_USER),
     pass: env(SMTP.SMTP_PASSWORD),
@@ -14,9 +14,7 @@ const transporter = nodemailer.createTransport({
 });
 export const sendEmail = async (options) => {
   try {
-    console.log('Sending email with options:', options);
     const result = await transporter.sendMail(options);
-    console.log('Email sent successfully:', result);
     return result;
   } catch (error) {
     console.error('Email sending error:', error.message);

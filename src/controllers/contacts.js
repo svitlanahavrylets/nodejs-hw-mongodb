@@ -1,10 +1,13 @@
 import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 import * as contactServices from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { sortByList } from '../db/models/Contact.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseContactFilterParams } from '../utils/parseContactFilterParams.js';
-import mongoose from 'mongoose';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { env } from '../utils/env.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -51,7 +54,23 @@ export const getContactsByIdController = async (req, res) => {
 
 export const postContactsController = async (req, res) => {
   const { _id: userId } = req.user;
-  const data = await contactServices.postContacts({ ...req.body, userId });
+
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+  const data = await contactServices.postContacts({
+    ...req.body,
+    userId,
+    photoUrl,
+  });
 
   res.status(201).json({
     status: 201,
@@ -63,7 +82,25 @@ export const postContactsController = async (req, res) => {
 export const patchContactsController = async (req, res) => {
   const { _id: userId } = req.user;
   const { contactId } = req.params;
-  const data = await contactServices.patchContacts(contactId, userId, req.body);
+
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    if (env('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  const data = await contactServices.patchContacts(
+    contactId,
+    userId,
+    req.body,
+    { photo: photoUrl },
+  );
 
   if (!data) throw createHttpError(404, 'Contact not found');
 

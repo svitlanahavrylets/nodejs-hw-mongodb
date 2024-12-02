@@ -3,6 +3,7 @@ import {
   loginUserSchema,
   registerUserSchema,
   requestResetSchema,
+  resetPasswordSchema,
 } from '../validation/auth.js';
 import ctrlWrapper from '../utils/ctrlWrapper.js';
 import validateBody from '../middlewares/validateBody.js';
@@ -33,6 +34,12 @@ authRouter.post(
   '/send-reset-email',
   validateBody(requestResetSchema),
   ctrlWrapper(authControllers.requestResetEmailController),
+);
+
+authRouter.post(
+  '/reset-pwd',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(authControllers.resetPasswordController),
 );
 
 export default authRouter;
