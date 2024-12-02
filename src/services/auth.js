@@ -1,9 +1,16 @@
 import bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
-import createHttpError from 'http-errors';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/users.js';
+import createHttpError from 'http-errors';
 import SessionsCollection from '../db/models/Session.js';
 import UsersCollection from '../db/models/User.js';
+import jwt from 'jsonwebtoken';
+import { sendEmail } from '../utils/sendMail.js';
+import * as path from 'node:path';
+import * as fs from 'node:fs/promises';
+import { SMTP, TEMPLATES_DIR } from '../constants/index.js';
+import handlebars from 'handlebars';
+import { env } from '../utils/env.js';
 
 const createSession = () => {
   const accessToken = randomBytes(30).toString('base64'); // створила токени
@@ -30,7 +37,9 @@ export const registerUser = async (payload) => {
 
 export const loginUser = async (payload) => {
   const user = await UsersCollection.findOne({ email: payload.email });
+
   if (!user) throw createHttpError(404, 'User not found');
+
   const isEqual = await bcrypt.compare(payload.password, user.password);
 
   if (!isEqual) {
@@ -79,3 +88,44 @@ export const logout = (sessionId) =>
 export const findSession = (filter) => SessionsCollection.findOne(filter);
 
 export const findUser = (filter) => UsersCollection.findOne(filter);
+
+export const requestResetToken = async (email) => {
+  const user = await UsersCollection.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+
+  const resetToken = jwt.sign(
+    {
+      sub: user._id,
+      email,
+    },
+    env('JWT_SECRET'),
+    {
+      expiresIn: '15m',
+    },
+  );
+
+  const resetPasswordTemplatePath = path.join(
+    TEMPLATES_DIR,
+    'reset-password-email.html',
+  );
+
+  const templateSource = await fs
+    .readFile(resetPasswordTemplatePath)
+    .toString();
+
+  const template = handlebars.compile(templateSource);
+
+  const html = template({
+    name: user.name,
+    link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
+  });
+
+  await sendEmail({
+    from: env(SMTP.SMTP_FROM),
+    to: email,
+    subject: 'Reset your password',
+    html,
+  });
+};
