@@ -22,7 +22,7 @@ export const authenticate = async (req, res, next) => {
   }
 
   const user = await findUser({ _id: session.userId });
-  console.log(user);
+
   if (!user) {
     return next(createHttpError(401, 'User not found'));
   }
