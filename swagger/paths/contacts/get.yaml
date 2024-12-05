@@ -1,5 +1,5 @@
 tags:
-  - Students
+  - Contacts
 summary: Get all contacts
 operationId: getAllContacts
 description: 'Get list of contacts with this endpoint'
