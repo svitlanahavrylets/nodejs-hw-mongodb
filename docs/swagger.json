@@ -14,7 +14,7 @@
       "url": "http://localhost:3000"
     },
     {
-      "url": "https://example.com/api/v1"
+      "url": "https://nodejs-hw-mongodb-2k0x.onrender.com/api-docs"
     }
   ],
   "tags": [
@@ -701,11 +701,6 @@
                       "home",
                       "personal"
                     ]
-                  },
-                  "userId": {
-                    "description": "Contact's user id",
-                    "type": "string",
-                    "example": "674d0d7200c3ebea96ba8e13"
                   },
                   "email": {
                     "description": "Contact's email",

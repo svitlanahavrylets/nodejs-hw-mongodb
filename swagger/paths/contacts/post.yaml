@@ -27,10 +27,6 @@ requestBody:
             description: "Contact's type"
             type: string
             enum: ['work', 'home', 'personal']
-          userId:
-            description: "Contact's user id"
-            type: string
-            example: 674d0d7200c3ebea96ba8e13
           email:
             description: "Contact's email"
             type: string
